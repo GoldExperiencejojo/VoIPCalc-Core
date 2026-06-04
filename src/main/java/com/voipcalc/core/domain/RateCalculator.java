@@ -5,15 +5,14 @@ import java.math.BigDecimal;
 public class RateCalculator {
 
     public FinalUnitPrice calculate(CallContext context) {
-        BaseRate baseRate = new BaseRate(context.calledNumber().countryCode());
-        BigDecimal price = baseRate.pricePerMinute();
+        BigDecimal price = new BaseRate(context.calledNumber().countryCode())
+                .pricePerMinute();
 
-        DiscountRate discountRate = new DiscountRate(context.customerType());
-        price = discountRate.applyTo(price);
+        price = new DiscountRate(context.customerType())
+                .applyTo(price);
 
         if (context.callTime().isNightPeriod()) {
-            NightReduction reduction = new NightReduction();
-            price = reduction.apply(price);
+            price = new NightReduction().apply(price);
         }
 
         return new FinalUnitPrice(price);

@@ -263,3 +263,21 @@
 **涉及文件/模块**: CallContext.java, FinalUnitPrice.java, RateCalculator.java, RateCalculatorIntegrationTest.java
 
 ---
+
+### 条目 15
+
+**类型**: REFACTOR
+
+**用户输入**: 在测试的保护下，重构代码以消除重复、改善设计，并保持测试全部通过。
+
+**AI输出摘要**: 审查 CallContext/FinalUnitPrice/RateCalculator，CallContext 和 FinalUnitPrice 已是最简 record 无需改动。RateCalculator.calculate() 消除 3 个仅用一次的局部变量（baseRate/discountRate/reduction），将每条规则链化为单个表达式，保持 BaseRate/DiscountRate/NightReduction 值对象在链中显式编排。33 个全量测试全部通过。
+
+**关键产物/决策**: 
+- RateCalculator.java: 规则链从 8 行代入 3 个临时变量缩减为 3 步表达式链
+- 保持值对象显式编排（new BaseRate(...)/new DiscountRate(...)/new NightReduction()），不绕过领域概念直接访问内部字段
+- 全量回归：33 个测试全部通过
+
+**涉及文件/模块**: RateCalculator.java
+
+---
+
