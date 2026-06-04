@@ -281,3 +281,21 @@
 
 ---
 
+### 条目 16
+
+**类型**: DEBUG
+
+**用户输入**: 子需求 5：健壮性与边界。业务规则：处理空号码、非法号码、null 时间等异常输入，确保领域模型不会以负单价或异常状态破坏不变量。TDD 指令：编写测试保护领域不变性，至少 3 个测试，覆盖 null 号码/非法格式/CallTime null/组合边界 0.00。使用 assertThrows 预期异常。先进行 Red 阶段，不用实现。
+
+**AI输出摘要**: 创建 RobustnessBorderTest.java（4 组 @Nested，9 个用例）。执行结果：9 个测试中 4 个通过（空字符串→OTHER、FinalUnitPrice(0.00) 和正值接受、组合边界 0.00），5 个失败（null rawNumber→NPE而非IAE、非法格式"abc"和"8613..."→未抛异常、null timestamp→NPE而非IAE、负数 FinalUnitPrice→未抛异常），BUILD FAILURE，符合 Red 阶段预期。
+
+**关键产物/决策**: 
+- 新增文件: `src/test/java/com/voipcalc/core/domain/RobustnessBorderTest.java`
+- 4 组测试：CalledNumber 输入校验（null IAE/空串→OTHER/非法格式 IAE/缺+号 IAE）、CallTime 校验（null IAE）、FinalUnitPrice 不变量（0.00 接受/负值 IAE）、组合边界 0.00
+- 当前 5 个失败根因：CalledNumber/CountryCode/CallTime 无输入校验（NPE或静默降级），FinalUnitPrice 无不变量保护
+- 4 个通过的测试是"过度预期"（空串已工作/0.00 和正值未拦截），Green 阶段保留即可
+
+**涉及文件/模块**: RobustnessBorderTest.java, CalledNumber, CountryCode, CallTime, FinalUnitPrice
+
+---
+
