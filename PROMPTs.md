@@ -78,3 +78,22 @@
 **涉及文件/模块**: BaseRateResolutionTest.java, CalledNumber, CountryCode, BaseRate
 
 ---
+
+### 条目 5
+
+**类型**: CODE
+
+**用户输入**: 编写刚好足够的代码让编译通过
+
+**AI输出摘要**: 创建三个领域类的最简实现——CountryCode 枚举（CHINA/USA/OTHER）、CalledNumber record（含 countryCode() 前缀匹配）、BaseRate record（含 pricePerMinute() switch 映射），10 个单元测试全部通过，TDD Green 阶段完成。
+
+**关键产物/决策**: 
+- 新增文件: `src/main/java/com/voipcalc/core/domain/CountryCode.java`
+- 新增文件: `src/main/java/com/voipcalc/core/domain/CalledNumber.java`
+- 新增文件: `src/main/java/com/voipcalc/core/domain/BaseRate.java`
+- 均使用 Java record/enum 保持不可变性，代码量最小化（3 个文件共 42 行）
+- CalledNumber.countryCode() 使用 startsWith("+86") → startsWith("+1") → OTHER 的顺序匹配
+
+**涉及文件/模块**: CountryCode.java, CalledNumber.java, BaseRate.java, BaseRateResolutionTest.java
+
+---
