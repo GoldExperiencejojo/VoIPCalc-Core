@@ -281,3 +281,59 @@
 
 ---
 
+### 条目 16
+
+**类型**: DEBUG
+
+**用户输入**: 子需求 5：健壮性与边界。业务规则：处理空号码、非法号码、null 时间等异常输入，确保领域模型不会以负单价或异常状态破坏不变量。TDD 指令：编写测试保护领域不变性，至少 3 个测试，覆盖 null 号码/非法格式/CallTime null/组合边界 0.00。使用 assertThrows 预期异常。先进行 Red 阶段，不用实现。
+
+**AI输出摘要**: 创建 RobustnessBorderTest.java（4 组 @Nested，9 个用例）。执行结果：9 个测试中 4 个通过（空字符串→OTHER、FinalUnitPrice(0.00) 和正值接受、组合边界 0.00），5 个失败（null rawNumber→NPE而非IAE、非法格式"abc"和"8613..."→未抛异常、null timestamp→NPE而非IAE、负数 FinalUnitPrice→未抛异常），BUILD FAILURE，符合 Red 阶段预期。
+
+**关键产物/决策**: 
+- 新增文件: `src/test/java/com/voipcalc/core/domain/RobustnessBorderTest.java`
+- 4 组测试：CalledNumber 输入校验（null IAE/空串→OTHER/非法格式 IAE/缺+号 IAE）、CallTime 校验（null IAE）、FinalUnitPrice 不变量（0.00 接受/负值 IAE）、组合边界 0.00
+- 当前 5 个失败根因：CalledNumber/CountryCode/CallTime 无输入校验（NPE或静默降级），FinalUnitPrice 无不变量保护
+- 4 个通过的测试是"过度预期"（空串已工作/0.00 和正值未拦截），Green 阶段保留即可
+
+**涉及文件/模块**: RobustnessBorderTest.java, CalledNumber, CountryCode, CallTime, FinalUnitPrice
+
+---
+
+### 条目 17
+
+**类型**: CODE
+
+**用户输入**: 编写刚好足够的代码使测试通过，不考虑任何额外的复杂度。
+
+**AI输出摘要**: 为 4 个文件添加最小输入校验：CalledNumber compact constructor 拦截 null；CountryCode.fromPrefix() 对非空非"+"前缀字符串抛 IAE（空串允许降级为 OTHER）；CallTime compact constructor 拦截 null timestamp；FinalUnitPrice compact constructor 拒绝负值。9 个健壮性测试全部通过，42 个全量测试回归全绿。
+
+**关键产物/决策**: 
+- CalledNumber.java: 新增 compact constructor，null rawNumber → IAE("rawNumber must not be null")
+- CountryCode.java: fromPrefix() 新增格式校验 `!rawNumber.isEmpty() && !rawNumber.startsWith("+")` → IAE
+- CallTime.java: 新增 compact constructor，null timestamp → IAE("timestamp must not be null")
+- FinalUnitPrice.java: 新增 compact constructor，负值 → IAE("单价不能为负")
+- 空字符串 "" 策略：不抛异常，降级为 OTHER（与业务默认行为一致）
+- 全量回归：42 个测试全部通过（33 + 9）
+
+**涉及文件/模块**: CalledNumber.java, CountryCode.java, CallTime.java, FinalUnitPrice.java, RobustnessBorderTest.java
+
+---
+
+### 条目 18
+
+**类型**: REFACTOR
+
+**用户输入**: 在测试的保护下，重构代码以消除重复、改善设计，并保持测试全部通过。
+
+**AI输出摘要**: 审查 CalledNumber/CallTime/FinalUnitPrice/CountryCode 4 个文件的输入校验代码，确认 Green 阶段实现已是最简形式——每个 compact constructor / 静态方法仅含一行校验逻辑，校验职责各归其位无跨类重复，无需重构。42 个全量测试全部通过。
+
+**关键产物/决策**: 
+- 审查结论：子需求 5 代码无需重构，Green 阶段的实现即为最简设计
+- 校验职责分布：CalledNumber(null) / CallTime(null) / FinalUnitPrice(负值) / CountryCode.fromPrefix(非法格式)
+- 全量回归：42 个测试全部通过
+
+**涉及文件/模块**: CalledNumber.java, CountryCode.java, CallTime.java, FinalUnitPrice.java
+
+---
+
+
