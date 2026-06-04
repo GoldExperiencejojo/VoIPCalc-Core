@@ -189,3 +189,21 @@
 **涉及文件/模块**: NightDiscountTest.java, CallTime, NightReduction
 
 ---
+
+### 条目 11
+
+**类型**: CODE
+
+**用户输入**: 编写刚好足够的代码使测试通过，不考虑任何额外的复杂度。
+
+**AI输出摘要**: 创建 CallTime record（含 LocalDateTime 构造器 + isNightPeriod() 小时判断）和 NightReduction record（含 apply() 减法+下限 clamp），10 个单元测试全部通过，子需求 3 的 Green 阶段完成。
+
+**关键产物/决策**: 
+- 新增文件: `src/main/java/com/voipcalc/core/domain/CallTime.java`
+- 新增文件: `src/main/java/com/voipcalc/core/domain/NightReduction.java`
+- CallTime.isNightPeriod(): `hour >= 23 || hour < 5`（包含 23:00，排除 05:00）
+- NightReduction.apply(): `price - 0.02`，结果 < 0 时返回 BigDecimal.ZERO
+
+**涉及文件/模块**: CallTime.java, NightReduction.java, NightDiscountTest.java
+
+---
