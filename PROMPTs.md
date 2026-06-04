@@ -299,3 +299,23 @@
 
 ---
 
+### 条目 17
+
+**类型**: CODE
+
+**用户输入**: 编写刚好足够的代码使测试通过，不考虑任何额外的复杂度。
+
+**AI输出摘要**: 为 4 个文件添加最小输入校验：CalledNumber compact constructor 拦截 null；CountryCode.fromPrefix() 对非空非"+"前缀字符串抛 IAE（空串允许降级为 OTHER）；CallTime compact constructor 拦截 null timestamp；FinalUnitPrice compact constructor 拒绝负值。9 个健壮性测试全部通过，42 个全量测试回归全绿。
+
+**关键产物/决策**: 
+- CalledNumber.java: 新增 compact constructor，null rawNumber → IAE("rawNumber must not be null")
+- CountryCode.java: fromPrefix() 新增格式校验 `!rawNumber.isEmpty() && !rawNumber.startsWith("+")` → IAE
+- CallTime.java: 新增 compact constructor，null timestamp → IAE("timestamp must not be null")
+- FinalUnitPrice.java: 新增 compact constructor，负值 → IAE("单价不能为负")
+- 空字符串 "" 策略：不抛异常，降级为 OTHER（与业务默认行为一致）
+- 全量回归：42 个测试全部通过（33 + 9）
+
+**涉及文件/模块**: CalledNumber.java, CountryCode.java, CallTime.java, FinalUnitPrice.java, RobustnessBorderTest.java
+
+---
+

@@ -20,6 +20,10 @@ public enum CountryCode {
     }
 
     public static CountryCode fromPrefix(String rawNumber) {
+        if (!rawNumber.isEmpty() && !rawNumber.startsWith("+")) {
+            throw new IllegalArgumentException(
+                    "rawNumber must start with '+', got: " + rawNumber);
+        }
         if (rawNumber.startsWith(CHINA.prefix)) {
             return CHINA;
         }
