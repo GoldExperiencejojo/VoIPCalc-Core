@@ -244,3 +244,22 @@
 **涉及文件/模块**: RateCalculatorIntegrationTest.java, CallContext, RateCalculator, FinalUnitPrice
 
 ---
+
+### 条目 14
+
+**类型**: CODE
+
+**用户输入**: 编写刚好足够的代码使测试通过，不考虑任何额外的复杂度。
+
+**AI输出摘要**: 创建 CallContext record（聚合三个值对象）、FinalUnitPrice record（包装 BigDecimal）、RateCalculator 领域服务（规则链：baseRate → discount → night reduction），8 个集成测试全部通过，33 个全量测试回归全绿。
+
+**关键产物/决策**: 
+- 新增文件: `src/main/java/com/voipcalc/core/domain/CallContext.java`（5 行）
+- 新增文件: `src/main/java/com/voipcalc/core/domain/FinalUnitPrice.java`（5 行）
+- 新增文件: `src/main/java/com/voipcalc/core/domain/RateCalculator.java`（17 行）
+- RateCalculator.calculate() 规则链: BaseRate → DiscountRate.applyTo() → [if night] NightReduction.apply()
+- 全量回归：33 个测试全部通过（10 + 5 + 10 + 8）
+
+**涉及文件/模块**: CallContext.java, FinalUnitPrice.java, RateCalculator.java, RateCalculatorIntegrationTest.java
+
+---
