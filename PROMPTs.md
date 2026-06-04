@@ -115,3 +115,22 @@
 **涉及文件/模块**: CountryCode.java, CalledNumber.java, BaseRate.java
 
 ---
+
+### 条目 7
+
+**类型**: DEBUG
+
+**用户输入**: 子需求 2：客户身份折扣。业务规则：VIP 用户享受 0.9 倍折扣，普通用户无折扣。TDD 指令：假设 DiscountRate 或 CustomerType 尚未实现，测试应描述折扣行为。至少 2 个测试：VIP 对任意正金额打 9 折；NORMAL 不打折。测试必须断言折扣后的精度（如 0.10 × 0.9 = 0.09）。只执行 Red 阶段。
+
+**AI输出摘要**: 创建 DiscountRateTest.java（2 组 @Nested，5 个用例），VIP 组验证 0.10→0.09、0.50→0.45、1.00→0.90 三种精度场景；NORMAL 组验证 0.10 和 0.50 原样返回。因 CustomerType 和 DiscountRate 均未实现，编译阶段报 15 个 "找不到符号"，BUILD FAILURE，符合 Red 阶段预期。
+
+**关键产物/决策**: 
+- 新增文件: `src/test/java/com/voipcalc/core/domain/DiscountRateTest.java`
+- 测试 API 设计: `new DiscountRate(CustomerType.VIP).applyTo(amount)` → BigDecimal
+- VIP 组含 3 个精度用例覆盖常见金额（0.10→0.09 为关键精度验证）
+- NORMAL 组含 2 个用例验证无折扣
+- 缺失类: CustomerType（枚举）、DiscountRate（record）
+
+**涉及文件/模块**: DiscountRateTest.java, CustomerType, DiscountRate
+
+---
