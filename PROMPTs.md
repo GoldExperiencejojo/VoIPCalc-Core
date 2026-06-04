@@ -319,3 +319,21 @@
 
 ---
 
+### 条目 18
+
+**类型**: REFACTOR
+
+**用户输入**: 在测试的保护下，重构代码以消除重复、改善设计，并保持测试全部通过。
+
+**AI输出摘要**: 审查 CalledNumber/CallTime/FinalUnitPrice/CountryCode 4 个文件的输入校验代码，确认 Green 阶段实现已是最简形式——每个 compact constructor / 静态方法仅含一行校验逻辑，校验职责各归其位无跨类重复，无需重构。42 个全量测试全部通过。
+
+**关键产物/决策**: 
+- 审查结论：子需求 5 代码无需重构，Green 阶段的实现即为最简设计
+- 校验职责分布：CalledNumber(null) / CallTime(null) / FinalUnitPrice(负值) / CountryCode.fromPrefix(非法格式)
+- 全量回归：42 个测试全部通过
+
+**涉及文件/模块**: CalledNumber.java, CountryCode.java, CallTime.java, FinalUnitPrice.java
+
+---
+
+
