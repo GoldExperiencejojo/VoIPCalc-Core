@@ -134,3 +134,21 @@
 **涉及文件/模块**: DiscountRateTest.java, CustomerType, DiscountRate
 
 ---
+
+### 条目 8
+
+**类型**: CODE
+
+**用户输入**: 编写刚好足够的代码使测试通过，不考虑任何额外的复杂度。
+
+**AI输出摘要**: 创建 CustomerType 枚举（VIP=0.9, NORMAL=1.0，含 discountFactor）和 DiscountRate record（含 applyTo 乘法方法），5 个单元测试全部通过，子需求 2 的 Green 阶段完成。
+
+**关键产物/决策**: 
+- 新增文件: `src/main/java/com/voipcalc/core/domain/CustomerType.java`
+- 新增文件: `src/main/java/com/voipcalc/core/domain/DiscountRate.java`
+- CustomerType 使用 BigDecimal 存储折扣系数（而非 double），确保 applyTo 中金额计算精度
+- DiscountRate.applyTo() 仅一行：`amount.multiply(customerType.discountFactor())`
+
+**涉及文件/模块**: CustomerType.java, DiscountRate.java, DiscountRateTest.java
+
+---
