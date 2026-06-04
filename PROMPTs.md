@@ -152,3 +152,20 @@
 **涉及文件/模块**: CustomerType.java, DiscountRate.java, DiscountRateTest.java
 
 ---
+
+### 条目 9
+
+**类型**: REFACTOR
+
+**用户输入**: 在测试的保护下，重构代码以消除重复、改善设计，并保持测试全部通过。
+
+**AI输出摘要**: 审查 CustomerType 和 DiscountRate 后确认代码已足够干净——DiscountRate 委托 CustomerType 的模式与 BaseRate 委托 CountryCode 的模式一致，两者均为枚举持有自身数据 + record 委托调用的对称设计，无重复可消除。15 个全量测试全部通过。
+
+**关键产物/决策**: 
+- 审查结论：当前子需求 2 代码无需重构，Green 阶段的实现即为最简设计
+- 设计一致性验证：DiscountRate → CustomerType.discountFactor() 与 BaseRate → CountryCode.baseRate() 对称
+- 全量回归：15 个测试全部通过（子需求 1 的 10 个 + 子需求 2 的 5 个）
+
+**涉及文件/模块**: CustomerType.java, DiscountRate.java
+
+---
