@@ -169,3 +169,23 @@
 **涉及文件/模块**: CustomerType.java, DiscountRate.java
 
 ---
+
+### 条目 10
+
+**类型**: DEBUG
+
+**用户输入**: 子需求 3：夜间低谷福利。业务规则：通话时间在 23:00 至次日 05:00 之间，单价减免 0.02，且不低于 0。TDD 指令：先编写 CallTime.isNightPeriod() 的测试，覆盖白天时段、23:00 边界、05:00 边界。再编写 NightReduction.apply() 的测试，覆盖正常减免、减免后恰好为 0、减免后低于 0 时返回 0。至少 4 个测试，其中必须包含 23:00 和 05:00 两个边界。先进行 Red 阶段，不用实现。
+
+**AI输出摘要**: 创建 NightDiscountTest.java（2 组 @Nested，10 个用例），CallTimeNightPeriod 组覆盖 12:00、22:59、23:00 边界、00:00、04:59、05:00 边界共 6 个场景；NightReductionApply 组覆盖 0.10→0.08、0.02→0.00（边界）、0.01→0.00（下限）、0.05→0.03 共 4 个场景。因 CallTime 和 NightReduction 均未实现，编译阶段报 20 个 "找不到符号"，BUILD FAILURE，符合 Red 阶段预期。
+
+**关键产物/决策**: 
+- 新增文件: `src/test/java/com/voipcalc/core/domain/NightDiscountTest.java`
+- CallTime API: `new CallTime(LocalDateTime)` + `isNightPeriod()` → boolean
+- NightReduction API: `new NightReduction()` + `apply(BigDecimal)` → BigDecimal
+- 边界覆盖：23:00（true）和 05:00（false）两个精确边界
+- 下限覆盖：0.02→0.00（恰好为0）和 0.01→0.00（低于0时clamp）
+- 缺失类: CallTime（record）、NightReduction（record）
+
+**涉及文件/模块**: NightDiscountTest.java, CallTime, NightReduction
+
+---
