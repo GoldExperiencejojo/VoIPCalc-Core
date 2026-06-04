@@ -37,3 +37,44 @@
 **涉及文件/模块**: DESIGN.md
 
 ---
+
+### 条目 3
+
+**类型**: CODE
+
+**用户输入**: 
+你是一位精通领域驱动设计（DDD）的测试工程师。现有一个 VoIP 费率计算引擎的核心领域模型，包括以下值对象，参考 DESIGN.md ：
+- CalledNumber（被叫号码）：通过 `countryCode()` 方法解析出 CountryCode 枚举（CHINA/USA/OTHER）。
+- BaseRate（基础费率）：通过 `pricePerMinute()` 方法返回 BigDecimal 单价。
+- CountryCode 枚举：CHINA 对应 +86，USA 对应 +1，OTHER 为其他所有。
+业务规则：根据被叫号码的国家代码决定基础单价，中国（+86）0.10 元/分钟，美国（+1）0.05 元/分钟，其他国家/地区统一 0.50 元/分钟
+请针对"基础费率解析"子需求设计至少 3 个单元测试用例，要求：1. 覆盖三种国家代码的典型正向场景（中国、美国、其他）。2. 每个测试用例需明确输入的被叫号码字符串，预期的国家代码，以及预期的单价。3. 测试应直接验证 BaseRate 对 CountryCode 的映射，或组合验证 CalledNumber 解析 + BaseRate 计算。4. 使用 JUnit 5 和 AssertJ 编写测试方法，确保 BigDecimal 比较使用 isEqualByComparingTo。5. 测试用例名称应清晰描述场景。
+
+**AI输出摘要**: 创建 BaseRateResolutionTest.java，包含 3 组 @Nested 测试类共 10 个用例：CalledNumber→CountryCode 解析（4个）、CountryCode→BaseRate 映射（3个）、组合验证（3个），覆盖中国/美国/其他三种正向场景及 +81 边界场景，BigDecimal 比较使用 isEqualByComparingTo。
+
+**关键产物/决策**: 
+- 新增文件: `src/test/java/com/voipcalc/core/domain/BaseRateResolutionTest.java`
+- 采用 @Nested 分组组织测试（解析 → 映射 → 组合），验证链为 CalledNumber → CountryCode → BaseRate
+- BigDecimal 断言统一使用 isEqualByComparingTo / usingComparator
+- 测试方法命名遵循 shouldXxxForYyy 模式，兼顾可读性与业务语义
+
+**涉及文件/模块**: BaseRateResolutionTest.java, CalledNumber, CountryCode, BaseRate
+
+---
+
+### 条目 4
+
+**类型**: DEBUG
+
+**用户输入**: 你是一名严格遵循测试驱动开发（TDD）思维的 VoIP 计费引擎测试工程师。你的工作方式必须完全遵守 Red-Green-Refactor 循环：1. Red：在没有任何实现代码的情况下，先编写一个会失败的单元测试。2. Green：编写刚好足够的代码使测试通过。3. Refactor：在测试的保护下，重构代码以消除重复、改善设计。你的当前任务：执行子需求 1：基础费率解析的三个单元测试，不实现任何代码，预期结果失败。
+
+**AI输出摘要**: 执行 Red 阶段，运行 mvnw test，因 CalledNumber、CountryCode、BaseRate 三类均无实现代码，Maven 编译器报告 30 个 "找不到符号" 错误，编译失败，符合 TDD Red 阶段预期。
+
+**关键产物/决策**: 
+- 确认 Red 阶段预期失败：src/main/java 下无任何实现代码，测试文件依赖的 3 个类全部缺失
+- 编译错误类型：CalledNumber、CountryCode、BaseRate 三类 "找不到符号"
+- 退出码为 1（非零），Maven Surefire 无法进入测试执行阶段，直接在编译阶段失败
+
+**涉及文件/模块**: BaseRateResolutionTest.java, CalledNumber, CountryCode, BaseRate
+
+---

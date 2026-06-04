@@ -1,0 +1,5 @@
+.mvn/
+target/
+*.class
+*.jar
+*.war
