@@ -115,3 +115,57 @@
 **涉及文件/模块**: CountryCode.java, CalledNumber.java, BaseRate.java
 
 ---
+
+### 条目 7
+
+**类型**: DEBUG
+
+**用户输入**: 子需求 2：客户身份折扣。业务规则：VIP 用户享受 0.9 倍折扣，普通用户无折扣。TDD 指令：假设 DiscountRate 或 CustomerType 尚未实现，测试应描述折扣行为。至少 2 个测试：VIP 对任意正金额打 9 折；NORMAL 不打折。测试必须断言折扣后的精度（如 0.10 × 0.9 = 0.09）。只执行 Red 阶段。
+
+**AI输出摘要**: 创建 DiscountRateTest.java（2 组 @Nested，5 个用例），VIP 组验证 0.10→0.09、0.50→0.45、1.00→0.90 三种精度场景；NORMAL 组验证 0.10 和 0.50 原样返回。因 CustomerType 和 DiscountRate 均未实现，编译阶段报 15 个 "找不到符号"，BUILD FAILURE，符合 Red 阶段预期。
+
+**关键产物/决策**: 
+- 新增文件: `src/test/java/com/voipcalc/core/domain/DiscountRateTest.java`
+- 测试 API 设计: `new DiscountRate(CustomerType.VIP).applyTo(amount)` → BigDecimal
+- VIP 组含 3 个精度用例覆盖常见金额（0.10→0.09 为关键精度验证）
+- NORMAL 组含 2 个用例验证无折扣
+- 缺失类: CustomerType（枚举）、DiscountRate（record）
+
+**涉及文件/模块**: DiscountRateTest.java, CustomerType, DiscountRate
+
+---
+
+### 条目 8
+
+**类型**: CODE
+
+**用户输入**: 编写刚好足够的代码使测试通过，不考虑任何额外的复杂度。
+
+**AI输出摘要**: 创建 CustomerType 枚举（VIP=0.9, NORMAL=1.0，含 discountFactor）和 DiscountRate record（含 applyTo 乘法方法），5 个单元测试全部通过，子需求 2 的 Green 阶段完成。
+
+**关键产物/决策**: 
+- 新增文件: `src/main/java/com/voipcalc/core/domain/CustomerType.java`
+- 新增文件: `src/main/java/com/voipcalc/core/domain/DiscountRate.java`
+- CustomerType 使用 BigDecimal 存储折扣系数（而非 double），确保 applyTo 中金额计算精度
+- DiscountRate.applyTo() 仅一行：`amount.multiply(customerType.discountFactor())`
+
+**涉及文件/模块**: CustomerType.java, DiscountRate.java, DiscountRateTest.java
+
+---
+
+### 条目 9
+
+**类型**: REFACTOR
+
+**用户输入**: 在测试的保护下，重构代码以消除重复、改善设计，并保持测试全部通过。
+
+**AI输出摘要**: 审查 CustomerType 和 DiscountRate 后确认代码已足够干净——DiscountRate 委托 CustomerType 的模式与 BaseRate 委托 CountryCode 的模式一致，两者均为枚举持有自身数据 + record 委托调用的对称设计，无重复可消除。15 个全量测试全部通过。
+
+**关键产物/决策**: 
+- 审查结论：当前子需求 2 代码无需重构，Green 阶段的实现即为最简设计
+- 设计一致性验证：DiscountRate → CustomerType.discountFactor() 与 BaseRate → CountryCode.baseRate() 对称
+- 全量回归：15 个测试全部通过（子需求 1 的 10 个 + 子需求 2 的 5 个）
+
+**涉及文件/模块**: CustomerType.java, DiscountRate.java
+
+---
