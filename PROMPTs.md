@@ -224,3 +224,23 @@
 **涉及文件/模块**: CallTime.java, NightReduction.java
 
 ---
+
+### 条目 13
+
+**类型**: DEBUG
+
+**用户输入**: 子需求 4：完整叠加逻辑。业务规则：按固定顺序叠加：基础费率 → 折扣 → 夜间减免。TDD 指令：编写 RateCalculator.calculate(CallContext) 的集成测试，作为整个规则链的规约。至少 6 个组合场景，覆盖不同国家 × 不同身份 × 白天/夜间。每个测试应构造完整的 CallContext，并验证最终 FinalUnitPrice。必须包含一个场景：折扣后 + 夜间减免结果刚好为 0。先执行 Red 阶段，不用实现。
+
+**AI输出摘要**: 创建 RateCalculatorIntegrationTest.java（3 组 @Nested，8 个用例）：DaytimeScenarios 组 3 个（中国+NORMAL=0.10, 美国+VIP=0.045, 其他+NORMAL=0.50），NighttimeScenarios 组 3 个（中国+NORMAL+夜=0.08, 其他+VIP+夜=0.43, 美国+VIP+夜=0.025），BoundaryScenarios 组 2 个（中国+VIP+白天=0.09, 美国+NORMAL+夜=0.03）。编译阶段报大量 "找不到符号"（CallContext/RateCalculator/FinalUnitPrice），BUILD FAILURE，符合 Red 阶段预期。
+
+**关键产物/决策**: 
+- 新增文件: `src/test/java/com/voipcalc/core/domain/RateCalculatorIntegrationTest.java`
+- API 设计: `new CallContext(CalledNumber, CustomerType, CallTime)` + `calculator.calculate(context)` → `FinalUnitPrice`
+- FinalUnitPrice API: `result.value()` → BigDecimal
+- 8 个场景覆盖 3 国家 × 2 身份 × 2 时段（白天/夜间），含中国+VIP+白天=0.09 和 美国+VIP+夜=0.025 精度场景
+- 关于"刚好为0"：当前 CountryCode 枚举中无 baseRate=0.02 的映射项（最低为 USA 0.05），该边界由 NightReduction 单元测试覆盖，集成测试选取了最小正值 0.025
+- 缺失类: CallContext（record）、RateCalculator（class）、FinalUnitPrice（record）
+
+**涉及文件/模块**: RateCalculatorIntegrationTest.java, CallContext, RateCalculator, FinalUnitPrice
+
+---
