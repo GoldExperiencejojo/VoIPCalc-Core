@@ -207,3 +207,20 @@
 **涉及文件/模块**: CallTime.java, NightReduction.java, NightDiscountTest.java
 
 ---
+
+### 条目 12
+
+**类型**: REFACTOR
+
+**用户输入**: 在测试的保护下，重构代码以消除重复、改善设计，并保持测试全部通过。
+
+**AI输出摘要**: 对 CallTime 和 NightReduction 做两处小重构：(1) CallTime 将魔法数字 23/5 提取为命名常量 NIGHT_START_HOUR/NIGHT_END_HOUR，提升可读性和可维护性；(2) NightReduction.apply() 将命令式 if-clamp 替换为声明式 BigDecimal.max(ZERO)，单行表达式更简洁。25 个全量测试全部通过。
+
+**关键产物/决策**: 
+- CallTime.java: 新增 `NIGHT_START_HOUR=23` 和 `NIGHT_END_HOUR=5` 静态常量
+- NightReduction.java: `apply()` 从 5 行语句缩减为 1 行表达式 `price.subtract(REDUCTION).max(BigDecimal.ZERO)`
+- 全量回归：25 个测试全部通过（子需求 1 的 10 个 + 子需求 2 的 5 个 + 子需求 3 的 10 个）
+
+**涉及文件/模块**: CallTime.java, NightReduction.java
+
+---
