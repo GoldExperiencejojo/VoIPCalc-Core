@@ -97,3 +97,21 @@
 **涉及文件/模块**: CountryCode.java, CalledNumber.java, BaseRate.java, BaseRateResolutionTest.java
 
 ---
+
+### 条目 6
+
+**类型**: REFACTOR
+
+**用户输入**: 在测试的保护下，重构代码以消除重复、改善设计，并保持测试全部通过
+
+**AI输出摘要**: 执行 TDD Refactor 阶段：将前缀字符串和基础费率从 CalledNumber/BaseRate 移入 CountryCode 枚举（遵循 Tell Don't Ask），CalledNumber 委托 fromPrefix()，BaseRate 委托 baseRate()，消除两处分散的知识点。10 个测试全绿保护。
+
+**关键产物/决策**: 
+- 重构 CountryCode.java: 新增 prefix 和 baseRate 构造参数，新增 fromPrefix() 静态工厂和 baseRate() 方法
+- 重构 CalledNumber.java: countryCode() 从直接 startsWith 比较改为委托 CountryCode.fromPrefix()
+- 重构 BaseRate.java: pricePerMinute() 从 switch 映射改为委托 countryCode.baseRate()
+- 消除重复: 前缀 "+86"/"+1" 不再出现在 CalledNumber 中，费率不再出现在 BaseRate 中
+
+**涉及文件/模块**: CountryCode.java, CalledNumber.java, BaseRate.java
+
+---
